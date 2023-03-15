@@ -44,7 +44,7 @@ func (a AccountAPIService) AccountBalance(ctx context.Context,
 		return nil, BuildError(ErrInvalidAccountAddress, nil, true)
 	}
 
-	if err := WaitForSynced(ctx, &s.node); err != nil {
+	if err := WaitForSynced(ctx, &a.node); err != nil {
 		return nil, err
 	}
 

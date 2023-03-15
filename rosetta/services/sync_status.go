@@ -2,9 +2,11 @@ package services
 
 import (
 	"context"
+	"math"
+	"time"
+
 	"github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/filecoin-project/lotus/api"
-	"math"
 )
 
 const FactorSecondToMillisecond int64 = 1e3
@@ -116,4 +118,15 @@ func CheckSyncStatus(ctx context.Context, node *api.FullNode) (*SyncStatus, *typ
 	}
 
 	return &status, nil
+}
+
+func WaitForSynced(ctx context.Context, node *api.FullNode) *types.Error {
+	for {
+		if status, err := CheckSyncStatus(ctx, node); err != nil {
+			return err
+		} else if status.IsSynced() {
+			return nil
+		}
+		time.Sleep(time.Millisecond * 100)
+	}
 }

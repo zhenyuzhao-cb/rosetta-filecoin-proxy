@@ -5,8 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/zondax/rosetta-filecoin-lib/actors"
 	"time"
+
+	"github.com/zondax/rosetta-filecoin-lib/actors"
 
 	"github.com/coinbase/rosetta-sdk-go/server"
 	"github.com/coinbase/rosetta-sdk-go/types"
@@ -63,6 +64,10 @@ func (s *BlockAPIService) Block(
 	requestedHeight := *request.BlockIdentifier.Index
 	if requestedHeight < 0 {
 		return nil, BuildError(ErrMalformedValue, nil, true)
+	}
+
+	if err := WaitForSynced(ctx, &s.node); err != nil {
+		return nil, err
 	}
 
 	// Check sync status
